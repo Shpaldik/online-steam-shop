@@ -6,74 +6,44 @@
     <div class="bg-[#2A3B4E] p-6 rounded-lg shadow-lg mb-8">
       <h2 class="text-xl font-semibold text-white mb-4">Add New Product</h2>
       <form @submit.prevent="addProduct" class="grid grid-cols-1 gap-4">
-        <input
-          v-model="newProduct.title"
-          type="text"
-          placeholder="Product Name"
-          class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-        />
-        <textarea
-          v-model="newProduct.body"
-          placeholder="Description"
-          class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-        ></textarea>
+        <input v-model="newProduct.title" type="text" placeholder="Product Name" class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none" />
+        <textarea v-model="newProduct.body" placeholder="Description" class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"></textarea>
+        <input v-model="newProduct.price" type="number" placeholder="Price" class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none" />
         <button type="submit" class="bg-[#4A90E2] hover:bg-[#357ABD] text-white font-semibold py-2 rounded-lg transition">
           Add Product
         </button>
       </form>
     </div>
-    
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div
-        v-for="product in products"
-        :key="product.id"
-        class="bg-[#2A3B4E] p-4 rounded-lg shadow-lg relative"
-      >
+      <div v-for="product in products" :key="product.id" class="bg-[#2A3B4E] p-4 rounded-lg shadow-lg relative">
         <h3 class="text-xl font-bold text-white mb-2">{{ product.title }}</h3>
         <p class="text-gray-300 mb-2">{{ product.body }}</p>
+        <p class="text-gray-300 mb-2">Price: {{ product.price }}</p>
         <div class="flex justify-end gap-2">
-          <button @click="editProduct(product)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
-            Edit
-          </button>
-          <button @click="deleteProduct(product.id)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-            Delete
-          </button>
+          <button @click="editProduct(product)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Edit</button>
+          <button @click="deleteProduct(product.id)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
         </div>
       </div>
     </div>
-    
-    <div
-      v-if="isEditing"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-    >
+
+    <div v-if="isEditing" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-[#2A3B4E] p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 class="text-xl font-semibold text-white mb-4">Edit Product</h2>
         <form @submit.prevent="updateProduct" class="grid grid-cols-1 gap-4">
-          <input
-            v-model="editedProduct.title"
-            type="text"
-            placeholder="Product Name"
-            class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-          />
-          <textarea
-            v-model="editedProduct.body"
-            placeholder="Description"
-            class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-          ></textarea>
+          <input v-model="editedProduct.title" type="text" placeholder="Product Name" class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none" />
+          <textarea v-model="editedProduct.body" placeholder="Description" class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"></textarea>
+          <input v-model="editedProduct.price" type="number" placeholder="Price" class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none" />
           <div class="flex justify-end gap-2">
-            <button type="button" @click="cancelEdit" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded">
-              Cancel
-            </button>
-            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
-              Save
-            </button>
+            <button type="button" @click="cancelEdit" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded">Cancel</button>
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">Save</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import Header from './Header.vue';
@@ -93,7 +63,8 @@ const products = ref([])
 
 const newProduct = ref({
   title: '',
-  body: ''
+  body: '',
+  price: ''
 })
 
 const isEditing = ref(false)
@@ -116,7 +87,8 @@ const addProduct = async () => {
   try {
     const response = await api.post('/posts', {
       title: newProduct.value.title,
-      body: newProduct.value.body
+      body: newProduct.value.body,
+      price: newProduct.value.price
     })
     if (response.data.status === 1) {
       products.value.push(response.data.data)
@@ -156,7 +128,8 @@ const updateProduct = async () => {
   try {
     const response = await api.put(`/posts/${editedProduct.value.id}`, {
       title: editedProduct.value.title,
-      body: editedProduct.value.body
+      body: editedProduct.value.body,
+      price: editedProduct.value.price
     })
     if (response.data.status === 1) {
       const index = products.value.findIndex(p => p.id === editedProduct.value.id)

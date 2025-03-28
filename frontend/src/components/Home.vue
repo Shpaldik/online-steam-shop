@@ -1,12 +1,12 @@
 <template>
     <Header />
     <Banner/>
-    <Categories />
+    <Products />
 </template>
   
   <script setup>
   import Header from './Header.vue';
   import Banner from './Banner.vue';
-  import Categories from './Categories.vue';
+  import Products from './Products.vue';
   </script>
   

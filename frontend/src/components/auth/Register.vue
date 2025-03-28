@@ -3,7 +3,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1F2937] to-[#161E26]">
     <div class="bg-[#2A3B4E] p-8 rounded-xl shadow-lg w-full max-w-md">
       <h2 class="text-2xl font-semibold text-white text-center mb-4">Create an Account</h2>
-      
+
       <form @submit.prevent="handleRegister">
         <div class="mb-4">
           <label class="text-gray-300 block mb-1">Username</label>
@@ -25,6 +25,8 @@
         </button>
       </form>
 
+      <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
+
       <p class="text-gray-400 text-center mt-4">
         Already have an account?
         <router-link to="/login" class="text-[#4A90E2] hover:underline">Login</router-link>
@@ -42,26 +44,39 @@ import Header from '../Header.vue';
 const name = ref('')
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
 const authStore = useAuthStore()
 const route = useRouter()
 
 const handleRegister = async () => {
+  errorMessage.value = ''
+
+  if (!name.value || !email.value || !password.value) {
+    errorMessage.value = 'All fields are required'
+    return
+  }
+
+  if (password.value.length < 5) {
+    errorMessage.value = 'Password must be at least 5 characters long'
+    return
+  }
+
   try {
     const res = await authStore.register({
       name: name.value,
       email: email.value,
       password: password.value
     })
-    
-    if (res && res.status === 1) {
-      console.log('Registered successfully!')
 
-      route.push('/home')
+    if (res && res.status === 1) {
+      route.push('/login')
+    } else if (res && res.status === 0) {
+      errorMessage.value = 'User already exists'
     } else {
-      console.log('Registration error:', res)
+      errorMessage.value = 'Registration failed'
     }
   } catch (error) {
-    console.error('An error occurred during registration:', error)
+    errorMessage.value = 'An error occurred during registration'
   }
 }
 </script>

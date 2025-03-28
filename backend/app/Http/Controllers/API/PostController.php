@@ -21,7 +21,8 @@ class PostController extends Controller
     public function store(Request $request) {       
         $validator = Validator::make($request->all(),[
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            "price" => "required"
 
         ]);
         if($validator->fails()){
@@ -34,7 +35,8 @@ class PostController extends Controller
 
         $post = Post::create([
             "title" => $request->title,
-            "body" => $request->body
+            "body" => $request->body,
+            "price" => $request->price
         ]);
 
         return response()->json([
@@ -56,7 +58,8 @@ class PostController extends Controller
     public function update(Request $request, $id) {
         $validator = Validator::make($request->all(),[
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            "price" => "required"
 
         ]);
         if($validator->fails()){
@@ -69,6 +72,7 @@ class PostController extends Controller
         $post = Post::find($id);
         $post->title = $request->title;
         $post->body = $request->body;
+        $post->price = $request->price;
         $post->save();
 
         return response()->json([
