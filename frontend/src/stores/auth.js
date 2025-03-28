@@ -4,7 +4,8 @@ import api from '@/services/axios'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    token: null
+    token: null,
+    role: null
   }),
   actions: {
     async register(formData) {
@@ -28,7 +29,10 @@ export const useAuthStore = defineStore('auth', {
         if (data.status === 1) {
           this.user = data.data
           this.token = data.data.token
+          this.role = data.data.role || 'user'
           localStorage.setItem('token', this.token)
+          localStorage.setItem('role', this.role)
+          localStorage.setItem('user', JSON.stringify(this.user))
         }
         return data
       } catch (error) {
@@ -40,21 +44,32 @@ export const useAuthStore = defineStore('auth', {
     setUserDate(){
       this.user = userData
       this.token = userData.token
+      this.role = userData.role || 'user'
       localStorage.setItem('token', this.token)
 
     },
 
-    loadTokenFromStorage(){
+    loadTokenFromStorage() {
       const savedToken = localStorage.getItem('token')
-      if(savedToken){
+      const savedRole = localStorage.getItem('role')
+      const savedUser = localStorage.getItem('user')
+      if (savedToken) {
         this.token = savedToken
         api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`
       }
+      if (savedRole) {
+        this.role = savedRole
+      }
+      if (savedUser) {
+        this.user = JSON.parse(savedUser)
+      }
     },
+    
 
     logout() {
       this.user = null
       this.token = null
+      this.role = null
       localStorage.removeItem('token')
     },
   }

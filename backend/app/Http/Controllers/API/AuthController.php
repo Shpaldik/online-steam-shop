@@ -35,19 +35,23 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'role' => 'user',
         ]);
 
-        $response = [];
-        $response['token'] = $user->createToken("MyApp")->plainTextToken;
-        $response['name'] = $user->name;
-        $response['email'] = $user->email;
 
-        return response()->json([
-            'status' => 1,
-            'message' => 'Пользователь успешно создан.',
-            'data' => $response
-        ], 201);
-    }
+        $response = [];
+            $response['token'] = $user->createToken("MyApp")->plainTextToken;
+            $response['name'] = $user->name;
+            $response['email'] = $user->email;
+            $response['role'] = $user->role; 
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Пользователь успешно создан.',
+                'data' => $response
+            ], 201);
+
+        }
 
 
     public function login(Request $request)
@@ -71,6 +75,7 @@ class AuthController extends Controller
         $response['token'] = $user->createToken("MyApp")->plainTextToken;
         $response['name'] = $user->name;
         $response['email'] = $user->email;
+        $response['role'] = $user->role;
 
         return response()->json([
             'status' => 1,

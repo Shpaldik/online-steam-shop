@@ -36,12 +36,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router';
 import Header from '../Header.vue';
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const authStore = useAuthStore()
+const route = useRouter()
 
 const handleRegister = async () => {
   try {
@@ -53,8 +55,8 @@ const handleRegister = async () => {
     
     if (res && res.status === 1) {
       console.log('Registered successfully!')
-      // Например, редирект на каталог
-      // router.push('/catalog') // если используешь router
+
+      route.push('/home')
     } else {
       console.log('Registration error:', res)
     }

@@ -2,9 +2,9 @@
   <header class="flex items-center justify-between p-3 bg-[var(--color-primary)]">
     <img src="/logo.svg" alt="logo" width="200">
     <nav class="flex gap-20 text-white font-bold">
-      <router-link to="/" class="hover:underline">Home</router-link>
-      <router-link to="/adminpanel" class="hover:underline">Catalog</router-link>
-      <router-link to="/about" class="hover:underline">About</router-link>
+      <router-link   v-if="route.path !== '/home'" to="/" class="hover:underline">Home</router-link>
+      <p>Catalog</p>
+
     </nav>
     <div class="flex gap-5 items-center">
       <template v-if="isAuthenticated">
@@ -22,8 +22,12 @@
       </template>
 
       <template v-if="isAuthenticated">
-        <button @click="logout" class="bg-[var(--color-blue)] px-5 py-2 rounded-xl text-[var(--color-primary)]">Logout</button>
-      </template>
+        <button @click="logout" class="bg-[var(--color-blue)] px-5 py-2 rounded-xl text-[var(--color-primary)]">Logout</button>      
+        <router-link v-if="isAdmin" to="/AdminPanel" class="bg-[var(--color-blue)] px-5 py-2 rounded-xl text-[var(--color-primary)]">
+        Products
+      </router-link>
+      </template>      
+
     </div>
   </header>
 </template>
@@ -39,9 +43,12 @@ const isLoginPage = computed(() => route.name === 'login')
 const isRegisterPage = computed(() => route.name === 'register')
 
 
+
 const authStore = useAuthStore()
 const logout = () => {
   useAuthStore().logout()
 }
 const isAuthenticated = computed(() => !!authStore.token)
+const isAdmin = computed(() => authStore.user && authStore.user.role === 'admin')
+
 </script>
