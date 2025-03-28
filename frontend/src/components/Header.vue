@@ -36,20 +36,22 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
+const router = useRouter()
 const route = useRoute()
+
 const isLoginPage = computed(() => route.name === 'login')
 const isRegisterPage = computed(() => route.name === 'register')
 
 const authStore = useAuthStore()
 const logout = () => {
   authStore.logout()
+  router.push('/login')
 }
 
 const isAuthenticated = computed(() => !!authStore.token)
 const isAdmin = computed(() => authStore.user && authStore.user.role === 'admin')
 </script>
-
