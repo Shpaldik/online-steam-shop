@@ -13,30 +13,30 @@ class PostController extends Controller
         $posts = Post::paginate(5);
         return response()->json([
             'status' => 1,
-            "message" => "Post fetched",
+            "message" => "Posts fetched",
             "data" => $posts
         ]);
     }
 
-    public function store(Request $request) {       
-        $validator = Validator::make($request->all(),[
-            'title' => 'required',
-            'body' => 'required',
-            "price" => "required"
-
+    public function store(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'body'  => 'required|string',
+            'price' => 'required|numeric',
         ]);
-        if($validator->fails()){
+
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 0,
-                'message' => 'validation errors.',
+                'message' => 'Validation errors.',
                 'data' => $validator->errors()->all()
-            ]);
+            ], 422);
         }
 
         $post = Post::create([
             "title" => $request->title,
-            "body" => $request->body,
-            "price" => $request->price
+            "body"  => $request->body,
+            "price" => $request->price,
         ]);
 
         return response()->json([
@@ -48,28 +48,47 @@ class PostController extends Controller
 
     public function show(Request $request, $id) {
         $post = Post::find($id);
+
+        if (!$post) {
+            return response()->json([
+                "status" => 0,
+                "message" => "Post not found",
+                "data" => null
+            ], 404);
+        }
+
         return response()->json([
             "status" => 1,
-            "message" => "Post return",
+            "message" => "Post fetched",
             "data" => $post
         ]);
     }
 
     public function update(Request $request, $id) {
-        $validator = Validator::make($request->all(),[
-            'title' => 'required',
-            'body' => 'required',
-            "price" => "required"
-
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'body'  => 'required|string',
+            'price' => 'required|numeric',
         ]);
-        if($validator->fails()){
+
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 0,
-                'message' => 'validation errors.',
+                'message' => 'Validation errors.',
                 'data' => $validator->errors()->all()
             ]);
         }
+
         $post = Post::find($id);
+
+        if (!$post) {
+            return response()->json([
+                "status" => 0,
+                "message" => "Post not found",
+                "data" => null
+            ], 404);
+        }
+
         $post->title = $request->title;
         $post->body = $request->body;
         $post->price = $request->price;
@@ -84,7 +103,17 @@ class PostController extends Controller
 
     public function destroy(Request $request, $id) {
         $post = Post::find($id);
-        $post -> delete();
+
+        if (!$post) {
+            return response()->json([
+                "status" => 0,
+                "message" => "Post not found",
+                "data" => null
+            ], 404);
+        }
+
+        $post->delete();
+
         return response()->json([
             "status" => 1,
             "message" => "Post deleted",
